@@ -103,4 +103,34 @@ public class UiLoginFormTests {
         driver.quit();
     }
 
+    @Test
+    public void toFillLoginFormByInvalidEmail() throws InterruptedException {
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--incognito");
+        options.addArguments("--disable-cache");
+        WebDriver driver = new ChromeDriver(options);
+        driver.manage().window().maximize();
+        driver.get("https://www.meetup.com/");
+        Thread.sleep(2000);
+        String homePageAcceptCookiesBtnLocator = "//button[@id='onetrust-accept-btn-handler']";
+        WebElement submitCookiesBtn = driver.findElement(By.xpath(homePageAcceptCookiesBtnLocator));
+        submitCookiesBtn.click();
+        String homePageLogInLinkLocator = "//a[@id='login-link']";
+        WebElement loginFormLink = driver.findElement(By.xpath(homePageLogInLinkLocator));
+        loginFormLink.click();
+        String loginFormInputEmailLocator = "//input[@id='email']";
+        String loginFormInputPwdLocator = "//input[@id='current-password']";
+        WebElement emailInputField = driver.findElement(By.xpath(loginFormInputEmailLocator));
+        emailInputField.sendKeys("@@@");
+        WebElement pwdInputField = driver.findElement(By.xpath(loginFormInputPwdLocator));
+        pwdInputField.sendKeys("testinG@2579!");
+        String submitLoginFormButtonLocator = "//button[contains(text(),'Log in')]";
+        WebElement submitLoginFormButton = driver.findElement(By.xpath(submitLoginFormButtonLocator));
+        submitLoginFormButton.click();
+        String expectedErrorText = "Error: \nEmail has invalid format";
+        WebElement actualErrorTextElement = driver.findElement(By.xpath("//div[@id='email-error']"));
+        String actualErrorText = actualErrorTextElement.getText();
+        Assertions.assertEquals(expectedErrorText, actualErrorText);
+        driver.quit();
+    }
 }
