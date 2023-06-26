@@ -1,5 +1,6 @@
 package by.itacademy.tatjana.balashevich.ui;
 
+import com.github.javafaker.Faker;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
@@ -132,5 +133,33 @@ public class UiLoginFormTests {
         String actualErrorText = actualErrorTextElement.getText();
         Assertions.assertEquals(expectedErrorText, actualErrorText);
         driver.quit();
+    }
+    @Test
+    public void toFillLoginFormByNotCreatedUser() throws InterruptedException {
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--incognito");
+        options.addArguments("--disable-cache");
+        WebDriver driver = new ChromeDriver(options);
+        driver.manage().window().maximize();
+        driver.get("https://www.meetup.com/");
+        Thread.sleep(2000);
+        String homePageAcceptCookiesBtnLocator = "//button[@id='onetrust-accept-btn-handler']";
+        WebElement submitCookiesBtn = driver.findElement(By.xpath(homePageAcceptCookiesBtnLocator));
+        submitCookiesBtn.click();
+        String homePageLogInLinkLocator = "//a[@id='login-link']";
+        WebElement loginFormLink = driver.findElement(By.xpath(homePageLogInLinkLocator));
+        loginFormLink.click();
+        String loginFormInputEmailLocator = "//input[@id='email']";
+        String loginFormInputPwdLocator = "//input[@id='current-password']";
+        Faker faker = new Faker();
+        WebElement emailInputField = driver.findElement(By.xpath(loginFormInputEmailLocator));
+        emailInputField.sendKeys(Util.generateEmail());
+        WebElement pwdInputField = driver.findElement(By.xpath(loginFormInputPwdLocator));
+        pwdInputField.sendKeys(Util.generatePWD());
+        String submitLoginFormButtonLocator = "//button[contains(text(),'Log in')]";
+        WebElement submitLoginFormButton = driver.findElement(By.xpath(submitLoginFormButtonLocator));
+        submitLoginFormButton.click();
+        //todo temporary hint error is displayed JS
+        //driver.quit();
     }
 }
